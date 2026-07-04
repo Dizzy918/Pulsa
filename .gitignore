@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+portfolio/node_modules/
+web-preview/node_modules/
+
+# JS/Expo build output
+.expo/
+dist/
+web-build/
+portfolio/dist/
+web-preview/.next/
+web-preview/out/
+
+# Native build artifacts (the native SOURCE in ios/ and android/ IS committed —
+# it contains hand-written code; run `npx pod-install` after cloning).
+ios/Pods/
+ios/build/
+ios/DerivedData/
+**/*.xcuserstate
+**/xcuserdata/
+android/.gradle/
+android/build/
+android/app/build/
+android/wear/build/
+android/local.properties
+*.keystore
+!android/app/debug.keystore
+
+# Logs & OS
+*.log
+.DS_Store
+
+# Secrets
+.env
+.env.local
+
+# Local tooling / session history
+.remember/
+.claude/
+
+# @generated expo-cli sync-2b81b286409207a5da26e14c78851eb30d8ccbdb
+expo-env.d.ts
+# @end expo-cli
+
+# Separate standalone project (its own git repo)
+portfolio/

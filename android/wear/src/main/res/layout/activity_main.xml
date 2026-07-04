@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0a0a0b">
+
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:padding="16dp">
+
+    <TextView
+        android:id="@+id/detection_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="◦"
+        android:textColor="#f2f2f3"
+        android:textSize="34sp"/>
+
+    <TextView
+        android:id="@+id/detection_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:text="@string/app_name"
+        android:textColor="#f2f2f3"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/detection_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:letterSpacing="0.15"
+        android:text="@string/standby"
+        android:textAllCaps="true"
+        android:textColor="#8e8e93"
+        android:textSize="9sp"/>
+
+    <Button
+        android:id="@+id/toggle_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/start_listening"
+        android:textSize="12sp"/>
+  </LinearLayout>
+</FrameLayout>
