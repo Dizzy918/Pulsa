@@ -44,3 +44,7 @@ expo-env.d.ts
 
 # Separate standalone project (its own git repo)
 portfolio/
+
+# Tooling artifacts
+.claude-flow/
+.vscode/

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <string name="app_name">Pulsa</string>
-  <string name="start_listening">Start listening</string>
-  <string name="stop_listening">Stop listening</string>
-  <string name="standby">Standby</string>
-  <string name="listening">Listening…</string>
-</resources>

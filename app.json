@@ -1,16 +1,16 @@
 {
   "expo": {
     "name": "Pulsa",
-    "slug": "tactiq",
+    "slug": "pulsa",
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "backgroundColor": "#faf5e8",
     "icon": "./assets/icon.png",
-    "scheme": "tactiq",
+    "scheme": "pulsa",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "com.tactiq.app",
+      "bundleIdentifier": "com.radoslavslavov.pulsa",
       "supportsTablet": false,
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Pulsa listens to ambient sound so it can alert you to important events on your wrist.",
@@ -20,7 +20,7 @@
       }
     },
     "android": {
-      "package": "com.tactiq.app",
+      "package": "com.radoslavslavov.pulsa",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0b2978"
@@ -35,12 +35,6 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-notifications",
-        {
-          "color": "#0b2978"
-        }
-      ],
       "expo-asset"
     ],
     "experiments": {

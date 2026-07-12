@@ -41,11 +41,31 @@ export type Listener = (payload: {
   detection: Detection;
   levels: number[]; // 0..1
 }) => void;
+export type ErrorListener = (message: string) => void;
 
 let currentListener: Listener | null = null;
 let dataSubscribed = false;
 let candidate: { cat: string; count: number } | null = null;
 const COMMIT_FRAMES = 3;
+
+// Lifecycle guards so rapid start/stop taps can't double-init the recorder.
+let running = false;
+let starting = false;
+
+// Watchdog: if listening produces no PCM within this window the mic is blocked
+// (permission denied, or another app holds it) — we surface that instead of
+// appearing to listen forever.
+const NO_AUDIO_TIMEOUT_MS = 4000;
+let onError: ErrorListener | null = null;
+let framesReceived = 0;
+let watchdog: ReturnType<typeof setTimeout> | null = null;
+
+function clearWatchdog() {
+  if (watchdog) {
+    clearTimeout(watchdog);
+    watchdog = null;
+  }
+}
 
 function feedPcm(int16: Int16Array) {
   for (let i = 0; i < int16.length; i++) {
@@ -133,31 +153,61 @@ function subscribeOnce() {
   if (dataSubscribed) return;
   dataSubscribed = true;
   AudioRecord.on("data", (base64) => {
-    const int16 = base64ToInt16(base64);
+    if (framesReceived === 0) clearWatchdog();
+    framesReceived++;
+
+    let int16: Int16Array;
+    try {
+      int16 = base64ToInt16(base64);
+    } catch {
+      return; // ignore a malformed chunk rather than crash the stream
+    }
     feedPcm(int16);
     if (ringFilled < FFT_SIZE || !currentListener) return;
 
-    const { levels, rms } = computeSpectrum();
-    const detection = isYamnetReady() ? mlDetect(rms) : dspDetect();
-    currentListener({ detection, levels });
+    try {
+      const { levels, rms } = computeSpectrum();
+      const detection = isYamnetReady() ? mlDetect(rms) : dspDetect();
+      currentListener({ detection, levels });
+    } catch {
+      // A single bad frame must never tear down listening.
+    }
   });
 }
 
-export async function startListening(listener: Listener) {
-  await loadYamnet(); // no-op after first call; falls back to DSP on failure
-  AudioRecord.init({
-    sampleRate: SAMPLE_RATE,
-    channels: 1,
-    bitsPerSample: 16,
-    audioSource: 6, // VOICE_RECOGNITION on Android; ignored on iOS
-    wavFile: "tactiq.wav",
-  });
-  currentListener = listener;
-  subscribeOnce();
-  AudioRecord.start();
+export async function startListening(listener: Listener, errorListener?: ErrorListener) {
+  if (running || starting) return; // already active — ignore repeat taps
+  starting = true;
+  onError = errorListener ?? null;
+  framesReceived = 0;
+  try {
+    await loadYamnet(); // no-op after first call; falls back to DSP on failure
+    AudioRecord.init({
+      sampleRate: SAMPLE_RATE,
+      channels: 1,
+      bitsPerSample: 16,
+      audioSource: 6, // VOICE_RECOGNITION on Android; ignored on iOS
+      wavFile: "tactiq.wav",
+    });
+    currentListener = listener;
+    subscribeOnce();
+    AudioRecord.start();
+    running = true;
+    watchdog = setTimeout(() => {
+      if (framesReceived === 0) {
+        onError?.(
+          "No audio is reaching Pulsa. Check that microphone access is enabled for Pulsa in Settings.",
+        );
+      }
+    }, NO_AUDIO_TIMEOUT_MS);
+  } finally {
+    starting = false;
+  }
 }
 
 export async function stopListening() {
+  clearWatchdog();
+  onError = null;
   currentListener = null;
   candidate = null;
   ringWrite = 0;
@@ -165,6 +215,8 @@ export async function stopListening() {
   mlWrite = 0;
   mlFilled = 0;
   lastMlDetection = null;
+  if (!running) return;
+  running = false;
   try {
     await AudioRecord.stop();
   } catch {

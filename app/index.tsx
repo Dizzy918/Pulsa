@@ -38,6 +38,7 @@ export default function Home() {
   );
   const [engine, setEngine] = useState<"ml" | "dsp">("dsp");
   const lastNotifiedCategory = useRef<string | null>(null);
+  const refireTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const start = async () => {
     setError(null);
@@ -68,12 +69,20 @@ export default function Home() {
           lastNotifiedCategory.current = detection.category;
           forwardDetection(detection).catch(() => {});
           // Clear after 4s so the same sound can alert again.
-          setTimeout(() => {
+          const t = setTimeout(() => {
             if (lastNotifiedCategory.current === detection.category) {
               lastNotifiedCategory.current = null;
             }
           }, 4000);
+          refireTimers.current.push(t);
         }
+      }, (msg) => {
+        // Watchdog fired (e.g. mic access denied) — surface it and stand down.
+        setError(msg);
+        setStatus("error");
+        void stopListening();
+        void stopBackgroundListening();
+        deactivateKeepAwake().catch(() => {});
       });
       setEngine(activeEngine());
       await startBackgroundListening();
@@ -88,6 +97,8 @@ export default function Home() {
   };
 
   const stop = async () => {
+    refireTimers.current.forEach(clearTimeout);
+    refireTimers.current = [];
     await stopListening();
     await stopBackgroundListening();
     deactivateKeepAwake().catch(() => {});

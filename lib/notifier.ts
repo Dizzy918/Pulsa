@@ -21,9 +21,14 @@ export async function configureNotifications() {
     }),
   });
 
-  const perm = await Notifications.getPermissionsAsync();
-  if (perm.status !== "granted") {
-    await Notifications.requestPermissionsAsync();
+  try {
+    const perm = await Notifications.getPermissionsAsync();
+    if (perm.status !== "granted") {
+      await Notifications.requestPermissionsAsync();
+    }
+  } catch {
+    // Permission APIs can reject on some OS versions; keep going so the
+    // Android channel below is still created.
   }
 
   if (Platform.OS === "android") {
@@ -70,17 +75,22 @@ export async function notifyDetection(d: Detection) {
     Vibration.vibrate([0, ...d.vibrationPattern]);
   }
 
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: `${d.icon}  ${d.label}`,
-      body: `Detected · ${Math.round(d.confidence * 100)}% · ${d.urgency}`,
-      priority:
-        d.urgency === "high"
-          ? Notifications.AndroidNotificationPriority.MAX
-          : Notifications.AndroidNotificationPriority.HIGH,
-      ...(Platform.OS === "android" ? { channelId: "tactiq-alerts" } : {}),
-      vibrate: d.vibrationPattern.length ? [0, ...d.vibrationPattern] : undefined,
-    },
-    trigger: null,
-  });
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `${d.icon}  ${d.label}`,
+        body: `Detected · ${Math.round(d.confidence * 100)}% · ${d.urgency}`,
+        priority:
+          d.urgency === "high"
+            ? Notifications.AndroidNotificationPriority.MAX
+            : Notifications.AndroidNotificationPriority.HIGH,
+        ...(Platform.OS === "android" ? { channelId: "tactiq-alerts" } : {}),
+        vibrate: d.vibrationPattern.length ? [0, ...d.vibrationPattern] : undefined,
+      },
+      trigger: null,
+    });
+  } catch {
+    // Notifications disabled or channel missing — the phone haptic above still
+    // fired, so on-device alerting keeps working.
+  }
 }
