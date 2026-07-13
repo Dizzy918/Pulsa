@@ -189,7 +189,7 @@ export default function Home() {
         <Legend />
 
         <Text style={styles.footer}>
-          On-device audio · Apple Watch &amp; Wear OS apps · other bands via
+          On-device audio · Apple Watch app · other watches &amp; bands via
           notification mirroring
         </Text>
       </ScrollView>

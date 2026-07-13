@@ -26,10 +26,9 @@ npx pod-install         # prepares the iOS native code
 
 1. Open the project in Xcode:
    ```bash
-   open ios/Tactiq.xcworkspace
+   open ios/Pulsa.xcworkspace
    ```
-   *(The Xcode project is still named "Tactiq" internally — that's fine, the app shows as **Pulsa** on your phone.)*
-2. In the left sidebar click the blue **Tactiq** project → select the **Tactiq** target → open the **Signing & Capabilities** tab.
+2. In the left sidebar click the blue **Pulsa** project → select the **Pulsa** target → open the **Signing & Capabilities** tab.
 3. Tick **Automatically manage signing**.
 4. Next to **Team**, click **Add an Account…**, sign in with your Apple ID, then choose your **"(Your Name) — Personal Team"** from the Team dropdown.
 5. If Xcode complains the bundle identifier is taken, change it to something unique, e.g. `com.yourname.pulsa`, and it will re-sign automatically.

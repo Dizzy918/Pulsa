@@ -1,6 +1,8 @@
-// Wrist-delivery layer. Each detection fans out over three failure-tolerant
-// transports: a mirrored notification (every band), the Wear OS Data Layer
-// (Android → Wear app), and WatchConnectivity (iOS → watchOS app).
+// Wrist-delivery layer. Each detection fans out over failure-tolerant
+// transports: a mirrored notification (every band) and WatchConnectivity
+// (iOS → watchOS app). The Android WearBridge native module was removed with
+// the Wear OS app (commit fd4861a); its guarded calls below are no-ops until
+// the module is restored.
 import { NativeModules, Platform } from "react-native";
 import type { Detection } from "./soundClassifier";
 import { notifyDetection } from "./notifier";

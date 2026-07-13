@@ -1,6 +1,13 @@
-# Tactiq for Wear OS — build & install
+# Pulsa for Wear OS — build & install
 
-The watch app lives in [`android/wear/`](../android/wear) as a standard Android application module (`:wear`), built inside the same Gradle project as the phone app.
+> **⚠️ Removed from the tree.** The Wear OS module (`android/wear/`) and the phone-side
+> `WearBridge` native module were dropped in the Tactiq→Pulsa package migration
+> (commit `fd4861a`). To resurrect them: `git show fd4861a^:android/wear/...` or check
+> out the parent commit. Wear OS watches still receive Pulsa alerts via notification
+> mirroring — see [WATCH_SETUP.md](WATCH_SETUP.md). The rest of this document describes
+> the module as it existed before removal.
+
+The watch app lived in `android/wear/` as a standard Android application module (`:wear`), built inside the same Gradle project as the phone app.
 
 ## What it does
 

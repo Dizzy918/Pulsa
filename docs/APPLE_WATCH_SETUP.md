@@ -1,4 +1,4 @@
-# Tactiq for Apple Watch — Xcode target setup
+# Pulsa for Apple Watch — Xcode target setup
 
 The watch app's complete Swift sources live in [`watchos/TactiqWatch/`](../watchos/TactiqWatch). Adding a watchOS target to an Xcode project can't be scripted reliably, so it's a one-time manual step (~5 minutes).
 
@@ -16,22 +16,22 @@ The watch app's complete Swift sources live in [`watchos/TactiqWatch/`](../watch
    npx pod-install
    ```
 
-2. Open `ios/Tactiq.xcworkspace` in Xcode.
+2. Open `ios/Pulsa.xcworkspace` in Xcode.
 3. **File → New → Target… → watchOS → App**. Configure:
    - Product Name: `TactiqWatch`
-   - Check **"Watch App for Existing iOS App"** and select the `Tactiq` app
+   - Check **"Watch App for Existing iOS App"** and select the `Pulsa` app
    - Interface: SwiftUI · Language: Swift
    - Bundle id must end up as `com.tactiq.app.watchkitapp` (Xcode derives it)
 4. Delete the generated `ContentView.swift` / `TactiqWatchApp.swift` in the new target, then drag all files from `watchos/TactiqWatch/` into the watch target's group (check *Copy items if needed* → **off**, add to the **TactiqWatch** target only).
 5. In the watch target's **Info** tab add:
-   - `NSMicrophoneUsageDescription` = "Tactiq listens to ambient sound to alert you to alarms, doorbells and voices."
+   - `NSMicrophoneUsageDescription` = "Pulsa listens to ambient sound to alert you to alarms, doorbells and voices."
 6. Watch target → Signing & Capabilities: same team as the iOS app.
 7. Select the `TactiqWatch` scheme → run on a paired Apple Watch (or watch simulator).
 
 ## Verifying the two modes
 
 - **Companion**: run the phone app, start listening, play a siren video — the watch should tap the alarm pattern (3 strong taps) while the phone shows the detection. Requires the watch app to be reachable (foreground / recently active); otherwise the mirrored notification covers it.
-- **Standalone**: leave the phone, open Tactiq on the watch, *Start listening* — detections show "WATCH MIC".
+- **Standalone**: leave the phone, open Pulsa on the watch, *Start listening* — detections show "WATCH MIC".
 
 ## Platform limitations (honest notes)
 
